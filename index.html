@@ -4,13 +4,97 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Probability Calculator</title>
-    <link rel="stylesheet" href="../css/style.css">
     <style>
+        /* Basic reset to remove default margins and padding */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* Body styles */
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            background-color: #383838;
+        }
+
+        /* Container for content */
+        .container {
+            width: 80%;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header styles */
+        header {
+            background-color: #383838;
+            color: rgb(192, 192, 192);
+            text-align: center;
+            padding: 1rem;
+        }
+
+        /* Main heading styles */
+        h1 {
+            color: #c0bebe;
+            margin-bottom: 20px;
+        }
+
+        /* Paragraph styles */
+        p {
+            margin-bottom: 15px;
+            color: #797979;
+        }
+
+        /* Button styles */
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #b4b4b4;
+            color: rgb(0, 0, 0);
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        /* Button hover effect */
+        .button:hover {
+            background-color: #222324;
+        }
+
+        /* Simple navigation menu */
+        nav {
+            background-color: #686565;
+            padding: 10px;
+        }
+
+        nav ul {
+            list-style: none;
+        }
+
+        nav ul li {
+            display: inline;
+            margin-right: 20px;
+        }
+
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+        }
+
+        /* Basic responsive design */
+        @media (max-width: 768px) {
+            .container {
+                width: 95%;
+            }
+        }
+
         .result {
             margin-top: 20px;
             display: flex;
             justify-content: space-between;
         }
+
         .result-box {
             width: 45%;
             border: 1px solid #a1a0a0;
@@ -31,11 +115,57 @@
         <label for="trials">Number of trials:</label>
         <input type="number" id="trials" min="1" required>
         <br><br>
-        <button onclick="calculate()">Calculate</button>
+        <button class="button" onclick="calculate()">Calculate</button>
 
         <div class="result" id="result"></div>
     </div>
 
-    <script src="../script/main.js"></script>
+    <script>
+        function calculateProbabilities(outcomes, trials) {
+            const probability = 1 / outcomes;
+            const expectedResults = {};
+            const actualResults = {};
+
+            for (let i = 0; i < outcomes; i++) {
+                expectedResults[`Outcome ${i + 1}`] = trials * probability;
+                actualResults[`Outcome ${i + 1}`] = 0;
+            }
+
+            for (let i = 0; i < trials; i++) {
+                const result = Math.floor(Math.random() * outcomes) + 1;
+                actualResults[`Outcome ${result}`] += 1;
+            }
+
+            return [expectedResults, actualResults];
+        }
+
+        function calculate() {
+            const outcomes = parseInt(document.getElementById('outcomes').value);
+            const trials = parseInt(document.getElementById('trials').value);
+
+            if (isNaN(outcomes) || outcomes <= 0 || isNaN(trials) || trials <= 0) {
+                alert("Please enter positive numbers for both fields.");
+                return;
+            }
+
+            const [expectedResults, actualResults] = calculateProbabilities(outcomes, trials);
+
+            let resultHTML = "<div class='result-box'><h2>Expected Values (Probability):</h2>";
+            for (const [outcome, expectedCount] of Object.entries(expectedResults)) {
+                const expectedPercentage = (expectedCount / trials) * 100;
+                resultHTML += `<p>${outcome}: ${expectedCount.toFixed(2)} times (${expectedPercentage.toFixed(2)}%)</p>`;
+            }
+            resultHTML += "</div>";
+
+            resultHTML += "<div class='result-box'><h2>Actual Results:</h2>";
+            for (const [outcome, actualCount] of Object.entries(actualResults)) {
+                const actualPercentage = (actualCount / trials) * 100;
+                resultHTML += `<p>${outcome}: ${actualCount} times (${actualPercentage.toFixed(2)}%)</p>`;
+            }
+            resultHTML += "</div>";
+
+            document.getElementById('result').innerHTML = resultHTML;
+        }
+    </script>
 </body>
 </html>
