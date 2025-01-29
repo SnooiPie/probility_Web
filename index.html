@@ -117,6 +117,7 @@
         <br><br>
         <button class="button" onclick="calculate()">Calculate</button>
 
+        <div id="total-difference" class="result-box" style="margin-top: 20px; width: 100%;"></div>
         <div class="result" id="result"></div>
     </div>
 
@@ -150,6 +151,8 @@
 
             const [expectedResults, actualResults] = calculateProbabilities(outcomes, trials);
 
+            let totalDifference = 0;
+
             let resultHTML = "<div class='result-box'><h2>Expected Values (Probability):</h2>";
             for (const [outcome, expectedCount] of Object.entries(expectedResults)) {
                 const expectedPercentage = (expectedCount / trials) * 100;
@@ -160,9 +163,14 @@
             resultHTML += "<div class='result-box'><h2>Actual Results:</h2>";
             for (const [outcome, actualCount] of Object.entries(actualResults)) {
                 const actualPercentage = (actualCount / trials) * 100;
-                resultHTML += `<p>${outcome}: ${actualCount} times (${actualPercentage.toFixed(2)}%)</p>`;
+                const difference = Math.abs(actualPercentage - (expectedResults[outcome] / trials) * 100);
+                resultHTML += `<p>${outcome}: ${actualCount} times (${actualPercentage.toFixed(2)}%) - Difference: ${difference.toFixed(2)}%</p>`;
+                totalDifference += difference;
             }
             resultHTML += "</div>";
+
+            const averageDifference = totalDifference / outcomes;
+            document.getElementById('total-difference').innerHTML = `<h2>Average Difference:</h2><p>${averageDifference.toFixed(2)}%</p>`;
 
             document.getElementById('result').innerHTML = resultHTML;
         }
