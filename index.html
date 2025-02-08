@@ -16,112 +16,216 @@
         body {
             font-family: Arial, sans-serif;
             line-height: 1.6;
-            background-color: #383838;
+            background-color: #1c1c1c;
+            color: #e0e0e0;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            flex-direction: column;
+            padding-top: 20px;
+            position: relative;
+        }
+
+        /* Language selection styles */
+        #language {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            padding: 5px;
+            background-color: #444;
+            color: #e0e0e0;
+            border: none;
+            border-radius: 4px;
         }
 
         /* Container for content */
         .container {
             width: 80%;
+            max-width: 800px;
             margin: 0 auto;
             padding: 20px;
+            background-color: #2c2c2c;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            border-radius: 8px;
         }
 
         /* Header styles */
         header {
-            background-color: #383838;
-            color: rgb(192, 192, 192);
+            background-color: #333;
+            color: #e0e0e0;
             text-align: center;
             padding: 1rem;
+            border-radius: 8px 8px 0 0;
+            position: relative;
         }
 
         /* Main heading styles */
         h1 {
-            color: #c0bebe;
             margin-bottom: 20px;
         }
 
-        /* Paragraph styles */
-        p {
-            margin-bottom: 15px;
-            color: #797979;
+        /* Label styles */
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        /* Input styles */
+        input[type="number"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #555;
+            border-radius: 4px;
+            background-color: #333;
+            color: #e0e0e0;
         }
 
         /* Button styles */
         .button {
             display: inline-block;
-            padding: 10px 20px;
-            background-color: #b4b4b4;
-            color: rgb(0, 0, 0);
+            width: 100%;
+            padding: 10px;
+            background-color: #444;
+            color: #e0e0e0;
             border: none;
-            border-radius: 5px;
+            border-radius: 4px;
             cursor: pointer;
+            font-size: 16px;
         }
 
         /* Button hover effect */
         .button:hover {
-            background-color: #222324;
+            background-color: #555;
         }
 
-        /* Simple navigation menu */
-        nav {
-            background-color: #686565;
-            padding: 10px;
-        }
-
-        nav ul {
-            list-style: none;
-        }
-
-        nav ul li {
-            display: inline;
-            margin-right: 20px;
-        }
-
-        nav ul li a {
-            color: white;
-            text-decoration: none;
-        }
-
-        /* Basic responsive design */
-        @media (max-width: 768px) {
-            .container {
-                width: 95%;
-            }
-        }
-
-        .result {
-            margin-top: 20px;
+        /* Result container styles */
+        .result-container {
             display: flex;
-            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 20px;
         }
 
+        /* Result box styles */
         .result-box {
-            width: 45%;
-            border: 1px solid #a1a0a0;
-            padding: 10px;
-            box-shadow: 2px 2px 12px #aaa;
-            background-color: rgb(214, 214, 214);
+            flex: 1;
+            min-width: 300px;
+            padding: 20px;
+            border: 1px solid #555;
+            border-radius: 4px;
+            background-color: #333;
+        }
+
+        /* Result heading styles */
+        .result-box h2 {
+            margin-bottom: 10px;
+        }
+
+        /* Paragraph styles */
+        p {
+            margin-bottom: 10px;
         }
     </style>
 </head>
 <body>
+    <select id="language" onchange="changeLanguage()">
+        <option value="en">English</option>
+        <option value="es">Spanish</option>
+        <option value="fr">French</option>
+        <option value="de">German</option>
+        <option value="tr">Turkish</option>
+    </select>
     <div class="container">
         <header>
-            <h1>Probability Calculator</h1>
+            <h1 id="title">Probability Calculator</h1>
         </header>
-        <label for="outcomes">Number of possible outcomes (e.g., 6 for a dice, 2 for coin flip):</label>
+        <label for="outcomes" id="outcomes-label">Number of possible outcomes (e.g., 6 for a dice, 2 for coin flip):</label>
         <input type="number" id="outcomes" min="1" required>
-        <br><br>
-        <label for="trials">Number of trials:</label>
+        <label for="trials" id="trials-label">Number of trials:</label>
         <input type="number" id="trials" min="1" required>
-        <br><br>
         <button class="button" onclick="calculate()">Calculate</button>
 
-        <div id="total-difference" class="result-box" style="margin-top: 20px; width: 100%;"></div>
-        <div class="result" id="result"></div>
+        <div id="total-difference" class="result-box"></div>
+        <div class="result-container" id="result"></div>
     </div>
 
     <script>
+        const translations = {
+            en: {
+                title: "Probability Calculator",
+                outcomesLabel: "Number of possible outcomes (e.g., 6 for a dice, 2 for coin flip):",
+                trialsLabel: "Number of trials:",
+                calculateButton: "Calculate",
+                averageDifference: "Average Difference:",
+                expectedValues: "Expected Values (Probability):",
+                actualResults: "Actual Results:",
+                outcome: "Outcome",
+                times: "times",
+                difference: "Difference"
+            },
+            es: {
+                title: "Calculadora de Probabilidad",
+                outcomesLabel: "Número de resultados posibles (por ejemplo, 6 para un dado, 2 para lanzar una moneda):",
+                trialsLabel: "Número de pruebas:",
+                calculateButton: "Calcular",
+                averageDifference: "Diferencia Promedio:",
+                expectedValues: "Valores Esperados (Probabilidad):",
+                actualResults: "Resultados Actuales:",
+                outcome: "Resultado",
+                times: "veces",
+                difference: "Diferencia"
+            },
+            fr: {
+                title: "Calculateur de Probabilité",
+                outcomesLabel: "Nombre de résultats possibles (par exemple, 6 pour un dé, 2 pour un lancer de pièce):",
+                trialsLabel: "Nombre d'essais:",
+                calculateButton: "Calculer",
+                averageDifference: "Différence Moyenne:",
+                expectedValues: "Valeurs Attendues (Probabilité):",
+                actualResults: "Résultats Réels:",
+                outcome: "Résultat",
+                times: "fois",
+                difference: "Différence"
+            },
+            de: {
+                title: "Wahrscheinlichkeitsrechner",
+                outcomesLabel: "Anzahl der möglichen Ergebnisse (z.B. 6 für einen Würfel, 2 für einen Münzwurf):",
+                trialsLabel: "Anzahl der Versuche:",
+                calculateButton: "Berechnen",
+                averageDifference: "Durchschnittliche Differenz:",
+                expectedValues: "Erwartete Werte (Wahrscheinlichkeit):",
+                actualResults: "Tatsächliche Ergebnisse:",
+                outcome: "Ergebnis",
+                times: "mal",
+                difference: "Unterschied"
+            },
+            tr: {
+                title: "Olasılık Hesaplayıcı",
+                outcomesLabel: "Mümkün olan sonuçların sayısı (örneğin, bir zar için 6, bir para atışı için 2):",
+                trialsLabel: "Deneme sayısı:",
+                calculateButton: "Hesapla",
+                averageDifference: "Ortalama Fark:",
+                expectedValues: "Beklenen Değerler (Olasılık):",
+                actualResults: "Gerçek Sonuçlar:",
+                outcome: "Sonuç",
+                times: "kez",
+                difference: "Fark"
+            }
+        };
+
+        function changeLanguage() {
+            const language = document.getElementById('language').value;
+            document.getElementById('title').innerText = translations[language].title;
+            document.getElementById('outcomes-label').innerText = translations[language].outcomesLabel;
+            document.getElementById('trials-label').innerText = translations[language].trialsLabel;
+            document.querySelector('.button').innerText = translations[language].calculateButton;
+            document.getElementById('average-difference-label').innerText = translations[language].averageDifference;
+            document.getElementById('expected-values-label').innerText = translations[language].expectedValues;
+            document.getElementById('actual-results-label').innerText = translations[language].actualResults;
+        }
+
         function calculateProbabilities(outcomes, trials) {
             const probability = 1 / outcomes;
             const expectedResults = {};
@@ -150,29 +254,34 @@
             }
 
             const [expectedResults, actualResults] = calculateProbabilities(outcomes, trials);
+            const language = document.getElementById('language').value;
+            const translation = translations[language];
 
             let totalDifference = 0;
 
-            let resultHTML = "<div class='result-box'><h2>Expected Values (Probability):</h2>";
+            let expectedHTML = `<div class='result-box'><h2 id="expected-values-label">${translation.expectedValues}</h2>`;
             for (const [outcome, expectedCount] of Object.entries(expectedResults)) {
                 const expectedPercentage = (expectedCount / trials) * 100;
-                resultHTML += `<p>${outcome}: ${expectedCount.toFixed(2)} times (${expectedPercentage.toFixed(2)}%)</p>`;
+                expectedHTML += `<p>${translation.outcome} ${outcome.split(' ')[1]}: ${expectedCount.toFixed(2)} ${translation.times} (${expectedPercentage.toFixed(2)}%)</p>`;
             }
-            resultHTML += "</div>";
+            expectedHTML += "</div>";
 
-            resultHTML += "<div class='result-box'><h2>Actual Results:</h2>";
+            let actualHTML = `<div class='result-box'><h2 id="actual-results-label">${translation.actualResults}</h2>`;
             for (const [outcome, actualCount] of Object.entries(actualResults)) {
                 const actualPercentage = (actualCount / trials) * 100;
                 const difference = Math.abs(actualPercentage - (expectedResults[outcome] / trials) * 100);
-                resultHTML += `<p>${outcome}: ${actualCount} times (${actualPercentage.toFixed(2)}%) - Difference: ${difference.toFixed(2)}%</p>`;
+                actualHTML += `<p>${translation.outcome} ${outcome.split(' ')[1]}: ${actualCount} ${translation.times} (${actualPercentage.toFixed(2)}%) - ${translation.difference}: ${difference.toFixed(2)}%</p>`;
                 totalDifference += difference;
             }
-            resultHTML += "</div>";
+            actualHTML += "</div>";
 
             const averageDifference = totalDifference / outcomes;
-            document.getElementById('total-difference').innerHTML = `<h2>Average Difference:</h2><p>${averageDifference.toFixed(2)}%</p>`;
+            document.getElementById('total-difference').innerHTML = `<h2 id="average-difference-label">${translation.averageDifference}</h2><p>${averageDifference.toFixed(2)}%</p>`;
 
-            document.getElementById('result').innerHTML = resultHTML;
+            document.getElementById('result').innerHTML = expectedHTML + actualHTML;
+
+            // Scroll to top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
     </script>
 </body>
