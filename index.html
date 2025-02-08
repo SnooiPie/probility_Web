@@ -215,15 +215,19 @@
             }
         };
 
+        let currentResults = null;
+
         function changeLanguage() {
             const language = document.getElementById('language').value;
-            document.getElementById('title').innerText = translations[language].title;
-            document.getElementById('outcomes-label').innerText = translations[language].outcomesLabel;
-            document.getElementById('trials-label').innerText = translations[language].trialsLabel;
-            document.querySelector('.button').innerText = translations[language].calculateButton;
-            document.getElementById('average-difference-label').innerText = translations[language].averageDifference;
-            document.getElementById('expected-values-label').innerText = translations[language].expectedValues;
-            document.getElementById('actual-results-label').innerText = translations[language].actualResults;
+            const translation = translations[language];
+            document.getElementById('title').innerText = translation.title;
+            document.getElementById('outcomes-label').innerText = translation.outcomesLabel;
+            document.getElementById('trials-label').innerText = translation.trialsLabel;
+            document.querySelector('.button').innerText = translation.calculateButton;
+
+            if (currentResults) {
+                updateResults(currentResults.expectedResults, currentResults.actualResults, translation);
+            }
         }
 
         function calculateProbabilities(outcomes, trials) {
@@ -254,19 +258,27 @@
             }
 
             const [expectedResults, actualResults] = calculateProbabilities(outcomes, trials);
+            currentResults = { expectedResults, actualResults };
             const language = document.getElementById('language').value;
             const translation = translations[language];
 
+            updateResults(expectedResults, actualResults, translation);
+
+            // Scroll to top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function updateResults(expectedResults, actualResults, translation) {
             let totalDifference = 0;
 
-            let expectedHTML = `<div class='result-box'><h2 id="expected-values-label">${translation.expectedValues}</h2>`;
+            let expectedHTML = `<div class='result-box'><h2>${translation.expectedValues}</h2>`;
             for (const [outcome, expectedCount] of Object.entries(expectedResults)) {
                 const expectedPercentage = (expectedCount / trials) * 100;
                 expectedHTML += `<p>${translation.outcome} ${outcome.split(' ')[1]}: ${expectedCount.toFixed(2)} ${translation.times} (${expectedPercentage.toFixed(2)}%)</p>`;
             }
             expectedHTML += "</div>";
 
-            let actualHTML = `<div class='result-box'><h2 id="actual-results-label">${translation.actualResults}</h2>`;
+            let actualHTML = `<div class='result-box'><h2>${translation.actualResults}</h2>`;
             for (const [outcome, actualCount] of Object.entries(actualResults)) {
                 const actualPercentage = (actualCount / trials) * 100;
                 const difference = Math.abs(actualPercentage - (expectedResults[outcome] / trials) * 100);
@@ -275,13 +287,10 @@
             }
             actualHTML += "</div>";
 
-            const averageDifference = totalDifference / outcomes;
-            document.getElementById('total-difference').innerHTML = `<h2 id="average-difference-label">${translation.averageDifference}</h2><p>${averageDifference.toFixed(2)}%</p>`;
+            const averageDifference = totalDifference / Object.keys(expectedResults).length;
+            document.getElementById('total-difference').innerHTML = `<h2>${translation.averageDifference}</h2><p>${averageDifference.toFixed(2)}%</p>`;
 
             document.getElementById('result').innerHTML = expectedHTML + actualHTML;
-
-            // Scroll to top
-            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
     </script>
 </body>
