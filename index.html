@@ -216,6 +216,7 @@
         };
 
         let currentResults = null;
+        let currentTrials = 0;
 
         function changeLanguage() {
             const language = document.getElementById('language').value;
@@ -226,7 +227,7 @@
             document.querySelector('.button').innerText = translation.calculateButton;
 
             if (currentResults) {
-                updateResults(currentResults.expectedResults, currentResults.actualResults, translation);
+                updateResults(currentResults.expectedResults, currentResults.actualResults, translation, currentTrials);
             }
         }
 
@@ -259,16 +260,17 @@
 
             const [expectedResults, actualResults] = calculateProbabilities(outcomes, trials);
             currentResults = { expectedResults, actualResults };
+            currentTrials = trials;
             const language = document.getElementById('language').value;
             const translation = translations[language];
 
-            updateResults(expectedResults, actualResults, translation);
+            updateResults(expectedResults, actualResults, translation, trials);
 
             // Scroll to top
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        function updateResults(expectedResults, actualResults, translation) {
+        function updateResults(expectedResults, actualResults, translation, trials) {
             let totalDifference = 0;
 
             let expectedHTML = `<div class='result-box'><h2>${translation.expectedValues}</h2>`;
